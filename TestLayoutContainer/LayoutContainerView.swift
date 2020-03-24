@@ -12,29 +12,37 @@ extension UIView {
     static var layoutContainerWidth: CGFloat { return 400 }
 }
 
+/// Reusable view that applies application-wide layout rule to views
 public class LayoutContainerView: UIView {
     
     private weak var maximumWidthConstraint: NSLayoutConstraint?
     
-    @IBOutlet public var contentView: UIView? {
-        didSet {
-            guard contentView !== oldValue else { return }
-            
-            oldValue?.removeFromSuperview()
-            
-            guard let contentView = contentView else { return }
-            
-            if subviews.filter({ $0 == contentView }).isEmpty {
-                addNewContentView()
-            } else {
-                updateExistingContentView()
-            }
-            
-            applyConstraintsToContentView()
-        }
+    /// Outlet contentView property. For use only as outlet in xib or storyboard.
+    /// Use `setContentView(view:)`  to add content view in code
+    @IBOutlet private(set) public var contentView: UIView?
+    
+    override public func awakeFromNib() {
+        super.awakeFromNib()
+        //If user added contentView in xib or storyboard
+        //then contentView is set there
+        clearContentViewConstraints()
+        applyConstraintsToContentView()
     }
     
-    private func updateExistingContentView() {
+    /// Set new contentView from code
+    /// - Parameter newContentView: contentView
+    public func setContentView(view newContentView: UIView) {
+        guard newContentView !== contentView else { return }
+        
+        contentView?.removeFromSuperview()
+        contentView = newContentView
+        
+        addNewContentView()
+        applyConstraintsToContentView()
+    }
+    
+    
+    private func clearContentViewConstraints() {
         guard let contentView = contentView else { return }
         let contentViewRelatedConstraints = constraints.filter{ $0.firstItem === contentView || $0.secondItem === contentView }
         NSLayoutConstraint.deactivate(contentViewRelatedConstraints)

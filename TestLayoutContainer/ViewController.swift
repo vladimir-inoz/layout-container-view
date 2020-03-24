@@ -18,7 +18,9 @@ class ViewController: UIViewController {
         
         let blueView = UIView()
         blueView.backgroundColor = .blue
-        layoutContainerView.contentView = blueView
+        layoutContainerView.setContentView(view: blueView)
+        layoutContainerView.setContentView(view: blueView)
+        layoutContainerView.setContentView(view: blueView)
     }
 
 
