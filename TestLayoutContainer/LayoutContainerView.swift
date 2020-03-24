@@ -21,6 +21,8 @@ public class LayoutContainerView: UIView {
     /// Use `setContentView(view:)`  to add content view in code
     @IBOutlet private(set) public var contentView: UIView?
     
+    public var adjustScrollViewInsets: Bool = true
+    
     override public func awakeFromNib() {
         super.awakeFromNib()
         //If user added contentView in xib or storyboard
@@ -73,7 +75,9 @@ public class LayoutContainerView: UIView {
         super.layoutSubviews()
         maximumWidthConstraint?.constant = UIView.layoutContainerWidth
         
-        if let nestedScrollView = searchScrollView() {
+        if adjustScrollViewInsets,
+            let nestedScrollView = searchScrollView() {
+            nestedScrollView.clipsToBounds = false
             nestedScrollView.scrollIndicatorInsets = scrollViewInsets(for: nestedScrollView)
         }
     }
