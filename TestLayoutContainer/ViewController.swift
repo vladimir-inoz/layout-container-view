@@ -16,11 +16,11 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        let blueView = UIView()
+        let blueView = UIScrollView()
         blueView.backgroundColor = .blue
         layoutContainerView.setContentView(view: blueView)
-        layoutContainerView.setContentView(view: blueView)
-        layoutContainerView.setContentView(view: blueView)
+        
+        blueView.addSubview(UIView())
     }
 
 

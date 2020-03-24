@@ -12,7 +12,7 @@ extension UIView {
     static var layoutContainerWidth: CGFloat { return 400 }
 }
 
-/// Reusable view that applies application-wide layout rule to views
+/// Reusable view that applies application-wide layout rule to content view
 public class LayoutContainerView: UIView {
     
     private weak var maximumWidthConstraint: NSLayoutConstraint?
@@ -29,7 +29,7 @@ public class LayoutContainerView: UIView {
         applyConstraintsToContentView()
     }
     
-    /// Set new contentView from code
+    /// Set new content view from code
     /// - Parameter newContentView: contentView
     public func setContentView(view newContentView: UIView) {
         guard newContentView !== contentView else { return }
@@ -72,5 +72,34 @@ public class LayoutContainerView: UIView {
     override public func layoutSubviews() {
         super.layoutSubviews()
         maximumWidthConstraint?.constant = UIView.layoutContainerWidth
+        
+        if let nestedScrollView = searchScrollView() {
+            nestedScrollView.scrollIndicatorInsets = scrollViewInsets(for: nestedScrollView)
+        }
+    }
+}
+
+// MARK: - Scroll view insets routines
+
+extension LayoutContainerView {
+    private func searchScrollView() -> UIScrollView? {
+        guard let contentView = contentView else { return nil }
+        
+        if let contentScrollView = contentView as? UIScrollView { return contentScrollView }
+        
+        for subview in contentView.subviews {
+            if subview is UIScrollView { return subview as? UIScrollView }
+        }
+        
+        return nil
+    }
+    
+    private func scrollViewInsets(for scrollView: UIScrollView) -> UIEdgeInsets {
+        let scrollViewFrame = scrollView.convert(scrollView.bounds, to: self)
+        
+        let leftInset = -scrollViewFrame.minX
+        let rightInset = -(bounds.width - scrollViewFrame.maxX)
+        
+        return UIEdgeInsets(top: 0, left: leftInset, bottom: 0, right: rightInset)
     }
 }
